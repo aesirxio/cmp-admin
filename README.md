@@ -1,14 +1,13 @@
-# AesirX BI
+# AesirX CMP Admin
 
-AesirX BI is our Open Source Business Intelligence as a Service (BIaaS) Solution
+AesirX CMP Admin
 
 It allows you to successfully gain legal 1st-party data insights for your business across multiple platforms and devices.
 
-Safeguard your data and your customers' privacy with our Web Analytics solution (a Google Analytics alternative) that’s fully GDPR compliant and built on privacy by design; AesirX BI enables data-driven marketing in a privacy-first world.
+Safeguard your data and your customers' privacy with our Web Analytics solution (a Google Analytics alternative) that’s fully GDPR compliant and built on privacy by design; AesirX CMP Admin enables data-driven marketing in a privacy-first world.
 
 Designed for easy integration, all data is collected through the AesirX JS Data Collector which is installed 1st-party on your website or application.
 
-Find out more in [https://bi.aesirx.io](https://bi.aesirx.io)
 
 ## Setup instructions
 
