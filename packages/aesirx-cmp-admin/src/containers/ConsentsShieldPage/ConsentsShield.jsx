@@ -126,7 +126,7 @@ const ConsentsShield = observer(() => {
   };
 
   const checkTrial = async () => {
-    console.log('checkTrial');
+    console.log('checkTrialmeeee');
     try {
       const url = `https://api.aesirx.io/index.php?webserviceClient=site&webserviceVersion=1.0.0&option=member&task=validateWPDomain&api=hal&domain=${encodeURIComponent(
         activeDomain[0]
@@ -160,16 +160,25 @@ const ConsentsShield = observer(() => {
             `Your trial license ends in ${timeLeft}. Please update your license <a href='https://aesirx.io/licenses' target='_blank'>here</a>.`
           );
         }
+        if (consentsShield?.expired_date !== dateExpired.getTime()) {
+          await saveLicense({
+            domain: activeDomain[0],
+            is_cmp_license_valid: true,
+            expired_date: dateExpired.getTime(),
+          });
+        }
       } else if (result.date_expired) {
         setMessage(
           `Your free trial has ended. Please update your license <a href='https://aesirx.io/licenses' target='_blank'>here</a>.`
         );
-        await saveLicense({
-          domain: activeDomain[0],
-          is_cmp_license_valid: false,
-          openai_key: '',
-          openai_assistant: '',
-        });
+        if (consentsShield?.expired_date !== dateExpired.getTime()) {
+          await saveLicense({
+            domain: activeDomain[0],
+            is_cmp_license_valid: false,
+            openai_key: '',
+            openai_assistant: '',
+          });
+        }
       } else {
         await triggerTrial();
       }
@@ -182,6 +191,7 @@ const ConsentsShield = observer(() => {
 
   // --- Start Trial if not found ---
   const triggerTrial = async () => {
+    console.log('triggerTrial', triggerTrial);
     try {
       const url =
         'https://api.aesirx.io/index.php?webserviceClient=site&webserviceVersion=1.0.0&option=member&task=validateWPDomain&api=hal';
@@ -212,19 +222,27 @@ const ConsentsShield = observer(() => {
         ...(consentsShield?.gtag_id ? { gtag_id: consentsShield?.gtag_id } : {}),
         ...(consentsShield?.gtm_id ? { gtm_id: consentsShield?.gtm_id } : {}),
       });
-    if (consentsShield?.license_key !== undefined && !values?.license_key) {
-      if (consentsShield?.license_key) {
-        checkLicense(consentsShield?.license_key);
+  }, [consentsShield]);
+
+  useEffect(() => {
+    console.log('consentsShield?.license_key', consentsShield?.license_key);
+    if (!values?.license_key) {
+      if (consentsShield?.license_key !== '') {
+        if (consentsShield?.license_key) {
+          checkLicense(consentsShield?.license_key);
+        }
       } else {
-        checkTrial();
+        if (!consentsShield?.license_key) {
+          checkTrial();
+        }
       }
     }
-  }, [consentsShield]);
+  }, [consentsShield?.license_key]);
 
   const handleSubmit = async () => {
     if (values) {
       await updateConsentsShield(values);
-      checkLicense(values?.license_key);
+      values?.license_key && checkLicense(values?.license_key);
     }
   };
 

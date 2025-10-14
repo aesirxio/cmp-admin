@@ -15,8 +15,8 @@ const mainMenu = [
         page: 'dashboard',
       },
       {
-        text: 'txt_consent_template',
-        mini_text: 'txt_consent_template',
+        text: 'txt_consent_modal',
+        mini_text: 'txt_consent_modal',
         link: `/consent-template`,
         page: 'consent-template',
       },
@@ -45,6 +45,12 @@ const mainMenu = [
         text: 'txt_id_verification',
         mini_text: 'txt_id_verification',
         link: `/id-verification`,
+      },
+      {
+        text: 'txt_ai_privacy_advisor',
+        mini_text: 'txt_ai_privacy_advisor',
+        link: `/ai-advisor`,
+        page: 'ai-advisor',
       },
     ],
   },

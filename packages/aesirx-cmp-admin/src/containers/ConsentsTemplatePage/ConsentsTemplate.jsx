@@ -262,7 +262,7 @@ const ConsentsTemplate = observer(() => {
     <div className="py-4 px-4 h-100 d-flex flex-column min-vh-100">
       <div className="d-flex align-items-center justify-content-between mb-24 flex-wrap">
         <div className="position-relative">
-          <h2 className="fw-bold mb-8px">Consent Template</h2>
+          <h2 className="fw-bold mb-8px">Consent Modal</h2>
         </div>
         <Button
           variant="success"

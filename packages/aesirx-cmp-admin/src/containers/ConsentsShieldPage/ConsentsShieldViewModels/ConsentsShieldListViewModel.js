@@ -48,6 +48,18 @@ class ConsentsShieldListViewModel {
     );
   };
 
+  updateConsentsTrial = (data, isLoading = true) => {
+    if (isLoading) {
+      this.statusUpdateConsentsShield = PAGE_STATUS.LOADING;
+    }
+    this.consentsStore.updateConsentsShield(
+      data,
+      this.callbackOnDataUpdateConsentShieldSuccessHandler,
+      this.callbackOnErrorUpdateConsentHandler,
+      isLoading
+    );
+  };
+
   setDataFilter = (dataFilter) => {
     this.dataFilter = dataFilter;
   };

@@ -13,6 +13,7 @@ const ConsentsAdvancePage = lazy(() => import('../containers/ConsentsAdvancePage
 const IDVerificationPage = lazy(() => import('../containers/IDVerificationPage'));
 const ConsentsLogicPage = lazy(() => import('../containers/ConsentsLogicPage'));
 const GeoHandlingPage = lazy(() => import('../containers/GeoHandlingPage'));
+const AIAdvisorPage = lazy(() => import('../containers/AIAdvisorPage'));
 const authRoutes = [
   {
     path: '/login',
@@ -56,6 +57,11 @@ const mainRoutes = [
     path: ['/consent-advance'],
     exact: true,
     main: () => <ConsentsAdvancePage />,
+  },
+  {
+    path: ['/ai-advisor'],
+    exact: true,
+    main: () => <AIAdvisorPage />,
   },
 ];
 
