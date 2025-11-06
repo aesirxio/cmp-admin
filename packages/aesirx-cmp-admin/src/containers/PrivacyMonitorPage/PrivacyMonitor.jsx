@@ -1,18 +1,7 @@
-import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { usePrivacyMonitorViewModel } from './PrivacyMonitorViewModels/PrivacyMonitorViewModelContextProvider';
+import React from 'react';
 import { observer } from 'mobx-react';
-import { useBiViewModel } from '../../store/BiStore/BiViewModelContextProvider';
 
 const PrivacyMonitor = observer(() => {
-  const { t } = useTranslation();
-  const {
-    privacyMonitorList: { initialize },
-  } = usePrivacyMonitorViewModel();
-  const {
-    biListViewModel: { activeDomain },
-  } = useBiViewModel();
-
   return (
     <div className="py-4 px-4 h-100 d-flex flex-column min-vh-100">
       <div>
@@ -24,5 +13,4 @@ const PrivacyMonitor = observer(() => {
     </div>
   );
 });
-
 export default PrivacyMonitor;

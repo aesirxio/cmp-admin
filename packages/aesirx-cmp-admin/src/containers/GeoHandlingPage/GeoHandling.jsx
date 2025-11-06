@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useGeoHandlingViewModel } from './GeoHandlingViewModels/GeoHandlingViewModelContextProvider';
 import { observer } from 'mobx-react';
 import { useBiViewModel } from '../../store/BiStore/BiViewModelContextProvider';
 import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
-import { Image, PAGE_STATUS, notify, FormEditor, AesirXSelect } from 'aesirx-uikit';
+import { PAGE_STATUS, AesirXSelect } from 'aesirx-uikit';
 import { env } from 'aesirx-lib';
-import { set } from 'mobx';
 import { languages, timezones } from 'utils';
 
 const GeoHandling = observer(() => {
-  const { t } = useTranslation();
   const {
     consentsList: { initialize, updateGeoHandling, geoHandling, statusUpdateGeoHandling },
   } = useGeoHandlingViewModel();

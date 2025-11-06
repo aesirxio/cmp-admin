@@ -1,4 +1,4 @@
-import { AesirxCmpApiService, CityItemModel } from 'aesirx-lib';
+import { AesirxCmpApiService } from 'aesirx-lib';
 
 class UserStore {
   async getList(filters) {

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useIDVerificationViewModel } from './IDVerificationViewModels/IDVerificationViewModelContextProvider';
 import { observer } from 'mobx-react';
 import { useBiViewModel } from '../../store/BiStore/BiViewModelContextProvider';
@@ -9,7 +8,6 @@ import { env } from 'aesirx-lib';
 import { allCountries } from 'utils/countries';
 
 const IDVerification = observer(() => {
-  const { t } = useTranslation();
   const {
     consentsList: {
       initialize,

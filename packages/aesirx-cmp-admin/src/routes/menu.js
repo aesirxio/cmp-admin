@@ -1,5 +1,3 @@
-import { env } from 'aesirx-lib';
-
 const getMainMenu = (isAdmin = false) => {
   const mainMenu = [
     {

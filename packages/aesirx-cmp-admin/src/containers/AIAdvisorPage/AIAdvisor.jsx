@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useAIAdvisorViewModel } from './AIAdvisorViewModels/AIAdvisorViewModelContextProvider';
 import { observer } from 'mobx-react';
 import { useBiViewModel } from '../../store/BiStore/BiViewModelContextProvider';
@@ -16,12 +15,11 @@ import CopyToClipboard from './CopyToClipboard';
 import { PAGE_STATUS, RingLoaderComponent } from 'aesirx-uikit';
 
 const AIAdvisor = observer(() => {
-  const { t } = useTranslation();
   const {
     consentsList: { initialize, updateAIAdvisor, aiAdvisor, statusAIAdvisor },
   } = useAIAdvisorViewModel();
   const {
-    biListViewModel: { activeDomain, dataStream },
+    biListViewModel: { activeDomain },
   } = useBiViewModel();
 
   useEffect(() => {
@@ -402,6 +400,7 @@ const AIAdvisor = observer(() => {
                   <a
                     href="https://aesirx.io/documentation/cmp/how-to/aesirx-cmp-how-to-generate-a-cookie-declaration-with-ai"
                     target="_blank"
+                    rel="noreferrer"
                     className="text-decoration-underline"
                   >
                     AesirX CMP Guide: How to Generate a Cookie Declaration with AI
@@ -456,6 +455,7 @@ const AIAdvisor = observer(() => {
                   <a
                     href="https://aesirx.io/documentation/cmp/how-to/aesirx-cmp-guide-how-to-generate-a-privacy-policy-with-ai"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     AesirX CMP Guide: How to Generate a Privacy Policy with AI
                   </a>
@@ -531,7 +531,7 @@ const AIAdvisor = observer(() => {
           ) : (
             <div className="bg-white w-100 rounded-3 p-4">
               Your license is expried or not found. Please update new license{' '}
-              <a href="https://aesirx.io/licenses" target="_blank">
+              <a href="https://aesirx.io/licenses" target="_blank" rel="noreferrer">
                 https://aesirx.io/licenses
               </a>
               .

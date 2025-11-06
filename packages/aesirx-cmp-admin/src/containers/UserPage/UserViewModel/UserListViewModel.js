@@ -4,7 +4,6 @@
  */
 
 import { makeAutoObservable, runInAction } from 'mobx';
-import moment from 'moment';
 import { PAGE_STATUS, notify } from 'aesirx-uikit';
 
 class UserListViewModel {

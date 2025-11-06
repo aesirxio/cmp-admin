@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useConsentsLogicViewModel } from './ConsentsLogicViewModels/ConsentsLogicViewModelContextProvider';
 import { observer } from 'mobx-react';
 import { useBiViewModel } from '../../store/BiStore/BiViewModelContextProvider';
 import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
-import { Image, PAGE_STATUS, notify, FormEditor } from 'aesirx-uikit';
+import { PAGE_STATUS } from 'aesirx-uikit';
 
 const ConsentsLogic = observer(() => {
-  const { t } = useTranslation();
   const {
     consentsList: { initialize, updateConsentsLogic, consentsLogic, statusUpdateConsentsLogic },
   } = useConsentsLogicViewModel();
@@ -253,7 +251,11 @@ const ConsentsLogic = observer(() => {
                   </li>
                   <li>
                     Ensure the file is accessible by visiting:{' '}
-                    <a href={`https://${activeDomain[0]}/.well-known/gpc.json`} target="_blank">
+                    <a
+                      href={`https://${activeDomain[0]}/.well-known/gpc.json`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       https://{activeDomain[0]}/.well-known/gpc.json
                     </a>
                   </li>

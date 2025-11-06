@@ -4,7 +4,7 @@ import { useConsentsShieldViewModel } from './ConsentsShieldViewModels/ConsentsS
 import { observer } from 'mobx-react';
 import { useBiViewModel } from '../../store/BiStore/BiViewModelContextProvider';
 import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
-import { Image, PAGE_STATUS, notify, FormEditor } from 'aesirx-uikit';
+import { PAGE_STATUS } from 'aesirx-uikit';
 import { env } from 'aesirx-lib';
 import axios from 'axios';
 
@@ -166,10 +166,11 @@ const ConsentsShield = observer(() => {
           });
         }
       } else if (result.date_expired) {
+        const dateExpired = new Date(result.date_expired);
         setMessage(
           `Your free trial has ended. Please update your license <a href='https://aesirx.io/licenses' target='_blank'>here</a>.`
         );
-        if (consentsShield?.expired_date !== dateExpired.getTime()) {
+        if (consentsShield?.expired_date !== dateExpired?.getTime()) {
           await saveLicense({
             domain: activeDomain[0],
             is_cmp_license_valid: false,
@@ -353,6 +354,7 @@ const ConsentsShield = observer(() => {
               <a
                 className="btn btn-success rounded-3 w-100 mt-3"
                 target="_blank"
+                rel="noreferrer"
                 href="https://aesirx.io/licenses"
               >
                 Manage License Here

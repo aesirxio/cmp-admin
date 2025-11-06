@@ -1,6 +1,5 @@
-import { Table, AesirXSelect, Spinner, ActionsBar, notify } from 'aesirx-uikit';
+import { Table, Spinner, ActionsBar, notify } from 'aesirx-uikit';
 import React, { useEffect } from 'react';
-import { Tab, Tabs } from 'react-bootstrap';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { observer } from 'mobx-react';
 import { withUserViewModel } from './UserViewModel/UserViewModelContextProvider';

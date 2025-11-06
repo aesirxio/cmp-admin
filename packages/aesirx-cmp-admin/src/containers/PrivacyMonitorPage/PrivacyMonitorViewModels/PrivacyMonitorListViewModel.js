@@ -3,7 +3,6 @@
  * @license     GNU General Public License version 3, see LICENSE.
  */
 
-import { notify } from 'aesirx-uikit';
 import PAGE_STATUS from '../../../constants/PageStatus';
 import { makeAutoObservable } from 'mobx';
 import moment from 'moment';
@@ -23,7 +22,7 @@ class PrivacyMonitorListViewModel {
     this.globalStoreViewModel = globalStoreViewModel;
   }
 
-  initialize = async (activeDomain) => {};
+  initialize = async () => {};
 
   setDataFilter = (dataFilter) => {
     this.dataFilter = dataFilter;

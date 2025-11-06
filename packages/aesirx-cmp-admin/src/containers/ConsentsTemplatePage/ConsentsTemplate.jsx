@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useConsentsTemplateViewModel } from './ConsentsTemplateViewModels/ConsentsTemplateViewModelContextProvider';
 import { observer } from 'mobx-react';
 import { useBiViewModel } from '../../store/BiStore/BiViewModelContextProvider';
@@ -8,7 +7,6 @@ import { Image, PAGE_STATUS, notify, FormEditor } from 'aesirx-uikit';
 import { env } from 'aesirx-lib';
 
 const ConsentsTemplate = observer(() => {
-  const { t } = useTranslation();
   const {
     consentsList: {
       initialize,
@@ -70,7 +68,6 @@ const ConsentsTemplate = observer(() => {
     setValues({ ...values, domain: activeDomain[0], template: name });
   };
   const handleSubmit = async () => {
-    console.log('values,enee', values);
     if (values?.template) {
       await updateConsentsTemplate(values);
     } else {
@@ -149,7 +146,7 @@ const ConsentsTemplate = observer(() => {
     </div>`;
     setDefaulConsentText(text);
   };
-  const updateDefaultConsentCookie = (template) => {
+  const updateDefaultConsentCookie = () => {
     const text = ``;
     setDefaulConsentCookie(text);
   };
@@ -352,7 +349,7 @@ const ConsentsTemplate = observer(() => {
               }}
             />
             <p className="mt-2 fst-italic">
-              Always link your own website's Privacy Policy, not the AesirX example
+              {`Always link your own website's Privacy Policy, not the AesirX example`}
             </p>
             <Button
               className="btn btn-success-light my-2 d-flex align-items-center"
