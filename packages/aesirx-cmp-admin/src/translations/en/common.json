@@ -61,7 +61,6 @@
   "txt_download_folder": "Download Folder",
   "txt_delete_folder": "Delete Folder",
   "txt_are_you_sure": "Are you sure?",
-  "txt_cancel": "Cancel",
   "txt_yes_delete": "Yes, Delete",
   "txt_file": "FILES",
   "txt_storage": "Storage",
@@ -259,5 +258,13 @@
   "txt_consent_logic": "Consent Logic",
   "txt_geo_handling": "Geo-Handling",
   "txt_consent_template": "Consent Template",
-  "txt_ai_privacy_advisor": "AI Privacy Advisor"
+  "txt_ai_privacy_advisor": "AI Privacy Advisor",
+  "txt_nodata": "No Data",
+  "txt_items": "Items",
+  "txt_add_new": "Add New",
+  "txt_save_close": "Save & Close",
+  "txt_user": "User",
+  "txt_row_select_error": "Please first make a selection from the list.",
+  "txt_privacy_scanner": "Privacy Scanner",
+  "txt_privacy_monitor": "Privacy Monitor"
 }

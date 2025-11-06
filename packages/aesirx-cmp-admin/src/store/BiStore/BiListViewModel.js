@@ -5,7 +5,7 @@
 
 import { notify, history } from 'aesirx-uikit';
 import PAGE_STATUS from '../../constants/PageStatus';
-import { env } from 'aesirx-lib';
+import { AesirxCmpApiService, env } from 'aesirx-lib';
 import { makeAutoObservable } from 'mobx';
 import moment from 'moment';
 
@@ -27,6 +27,8 @@ class BiListViewModel {
   activeDomain = env.REACT_APP_DATA_STREAM && JSON.parse(env.REACT_APP_DATA_STREAM)[0].domain;
   isSearch = false;
   integrationLink = 'dashboard';
+  dataStream = {};
+  dataStreamStatus = PAGE_STATUS.READY;
   constructor() {
     makeAutoObservable(this);
 
@@ -78,6 +80,27 @@ class BiListViewModel {
     this.activeDomain = domain;
   };
 
+  setDataStream = async (domain) => {
+    this.dataStreamStatus = PAGE_STATUS.LOADING;
+    const dataStream = await this.getDataStream(domain);
+    if (dataStream?.response?.respondedData) {
+      this.dataStream = dataStream?.response?.respondedData;
+    }
+    this.dataStreamStatus = PAGE_STATUS.READY;
+  };
+
+  async getDataStream(activeDomain) {
+    try {
+      const getAPIService = new AesirxCmpApiService();
+      const respondedData = await getAPIService.getConsentsTemplate(
+        activeDomain,
+        Math.floor(Date.now() / 1000)
+      );
+      return { error: false, response: { respondedData } };
+    } catch (error) {
+      return { error: true, response: error?.response?.data };
+    }
+  }
   setIntegrationLink = (link) => {
     if (
       location.pathname === '/wp-admin/admin.php' ||
@@ -87,10 +110,6 @@ class BiListViewModel {
         ...queryString.parse(location.search),
         ...{ page: 'aesirx-bi-' + link },
       };
-      console.log(
-        'unescape(queryString.stringify(search))',
-        unescape(queryString.stringify(search))
-      );
       history.push({
         ...location,
         ...{ search: unescape(queryString.stringify(search)) },
@@ -117,10 +136,12 @@ class BiListViewModel {
           : moment(date_start).format('YYYY-MM-DD'),
       },
     };
-    history.push({
-      ...location,
-      ...{ search: queryString.stringify(search) },
-    });
+    if (location?.pathname === '/consents' || location?.pathname === '/consent-advance') {
+      history.push({
+        ...location,
+        ...{ search: queryString.stringify(search) },
+      });
+    }
   };
 
   resetObservableProperties = () => {};

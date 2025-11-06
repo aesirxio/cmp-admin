@@ -98,7 +98,7 @@ const ConsentsLogic = observer(() => {
                 id={`inline-radio-opt-in`}
               />
               <Form.Label for="inline-radio-opt-in">
-                <div className="mb-2">Opt-Out Mode (California)</div>
+                <div className="mb-2">Opt-In Mode (EU)</div>
                 <div className="text-gray-600 fs-14">
                   No tracking technologies are activated until a user explicitly gives consent. This
                   is required by <span className="fw-semibold">GDPR</span> and{' '}

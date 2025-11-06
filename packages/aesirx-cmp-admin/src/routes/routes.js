@@ -4,7 +4,7 @@
  */
 
 import React, { lazy } from 'react';
-import { LoginPage, ProfilePage } from 'aesirx-uikit';
+import { history, LoginPage, ProfilePage } from 'aesirx-uikit';
 import { env } from 'aesirx-lib';
 const ConsentsPage = lazy(() => import('../containers/ConsentsPage'));
 const ConsentsShieldPage = lazy(() => import('../containers/ConsentsShieldPage'));
@@ -14,11 +14,15 @@ const IDVerificationPage = lazy(() => import('../containers/IDVerificationPage')
 const ConsentsLogicPage = lazy(() => import('../containers/ConsentsLogicPage'));
 const GeoHandlingPage = lazy(() => import('../containers/GeoHandlingPage'));
 const AIAdvisorPage = lazy(() => import('../containers/AIAdvisorPage'));
+const UserPage = lazy(() => import('../containers/UserPage'));
+const PrivacyScannerPage = lazy(() => import('../containers/PrivacyScannerPage'));
+const PrivacyMonitorPage = lazy(() => import('../containers/PrivacyMonitorPage'));
+const EditUserProvider = lazy(() => import('../containers/UserPage/edit'));
 const authRoutes = [
   {
     path: '/login',
     exact: true,
-    main: () => <LoginPage text="BI" loginEmail={env.REACT_APP_LOGIN_EMAIL} />,
+    main: () => <LoginPage text="CMP Admin" loginEmail={env.REACT_APP_LOGIN_EMAIL} />,
   },
 ];
 
@@ -63,6 +67,31 @@ const mainRoutes = [
     exact: true,
     main: () => <AIAdvisorPage />,
   },
+  {
+    path: ['/user-handling'],
+    exact: true,
+    main: () => <UserPage />,
+  },
+  {
+    path: ['/user-handling/edit/:id'],
+    exact: true,
+    main: ({ match }) => <EditUserProvider match={match} />,
+  },
+  {
+    path: ['/user-handling/add'],
+    exact: true,
+    main: () => <EditUserProvider />,
+  },
+  {
+    path: ['/privacy-scanner'],
+    exact: true,
+    main: () => <PrivacyScannerPage />,
+  },
+  {
+    path: ['/privacy-monitor'],
+    exact: true,
+    main: () => <PrivacyMonitorPage />,
+  },
 ];
 
 const settingRoutes = [
@@ -72,5 +101,8 @@ const settingRoutes = [
     main: () => <ProfilePage />,
   },
 ];
+const historyPush = (link) => {
+  return history.push('' + link);
+};
 
-export { authRoutes, mainRoutes, settingRoutes };
+export { authRoutes, mainRoutes, settingRoutes, historyPush };

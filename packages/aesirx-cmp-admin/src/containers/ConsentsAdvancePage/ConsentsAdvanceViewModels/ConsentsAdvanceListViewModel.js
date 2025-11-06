@@ -47,30 +47,30 @@ class ConsentsListViewModel {
         }
       });
     }
-    // this.getConsentsCategory(
-    //   {
-    //     ...dataFilter,
-    //   },
-    //   dateFilter
-    // );
-    // this.getConsentsCategoryByDate(
-    //   {
-    //     ...dataFilter,
-    //   },
-    //   dateFilter
-    // );
-    // this.getConsentsRegion(
-    //   {
-    //     ...dataFilter,
-    //   },
-    //   dateFilter
-    // );
-    // this.getConsentsOverrideLanguage(
-    //   {
-    //     ...dataFilter,
-    //   },
-    //   dateFilter
-    // );
+    this.getConsentsCategory(
+      {
+        ...dataFilter,
+      },
+      dateFilter
+    );
+    this.getConsentsCategoryByDate(
+      {
+        ...dataFilter,
+      },
+      dateFilter
+    );
+    this.getConsentsRegion(
+      {
+        ...dataFilter,
+      },
+      dateFilter
+    );
+    this.getConsentsOverrideLanguage(
+      {
+        ...dataFilter,
+      },
+      dateFilter
+    );
 
     Promise.all([
       this.getConsentsTier(

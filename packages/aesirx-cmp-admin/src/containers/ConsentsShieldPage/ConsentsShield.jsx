@@ -52,7 +52,6 @@ const ConsentsShield = observer(() => {
 
   const checkLicense = async (license_key) => {
     try {
-      console.log('checkLicense');
       const url = `https://api.aesirx.io/index.php?webserviceClient=site&webserviceVersion=1.0.0&option=member&task=validateWPLicense&api=hal&license=${license_key}`;
       const res = await fetchJson(url);
       const result = res?.result || {};
@@ -126,7 +125,6 @@ const ConsentsShield = observer(() => {
   };
 
   const checkTrial = async () => {
-    console.log('checkTrialmeeee');
     try {
       const url = `https://api.aesirx.io/index.php?webserviceClient=site&webserviceVersion=1.0.0&option=member&task=validateWPDomain&api=hal&domain=${encodeURIComponent(
         activeDomain[0]
@@ -191,7 +189,6 @@ const ConsentsShield = observer(() => {
 
   // --- Start Trial if not found ---
   const triggerTrial = async () => {
-    console.log('triggerTrial', triggerTrial);
     try {
       const url =
         'https://api.aesirx.io/index.php?webserviceClient=site&webserviceVersion=1.0.0&option=member&task=validateWPDomain&api=hal';
@@ -225,7 +222,6 @@ const ConsentsShield = observer(() => {
   }, [consentsShield]);
 
   useEffect(() => {
-    console.log('consentsShield?.license_key', consentsShield?.license_key);
     if (!values?.license_key) {
       if (consentsShield?.license_key !== '') {
         if (consentsShield?.license_key) {
@@ -250,7 +246,7 @@ const ConsentsShield = observer(() => {
     <div className="py-4 px-4 h-100 d-flex flex-column min-vh-100">
       <div className="d-flex align-items-center justify-content-between mb-24 flex-wrap">
         <div className="position-relative">
-          <h2 className="fw-bold mb-8px">Consent Shield</h2>
+          <h2 className="fw-bold mb-8px">Configuration</h2>
         </div>
         <Button
           variant="success"

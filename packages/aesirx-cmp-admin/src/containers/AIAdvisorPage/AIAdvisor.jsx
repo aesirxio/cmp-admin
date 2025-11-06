@@ -13,14 +13,15 @@ import {
   advisorRunMessage,
 } from 'utils/advisor';
 import CopyToClipboard from './CopyToClipboard';
+import { PAGE_STATUS, RingLoaderComponent } from 'aesirx-uikit';
 
 const AIAdvisor = observer(() => {
   const { t } = useTranslation();
   const {
-    consentsList: { initialize, updateAIAdvisor, aiAdvisor, statusUpdateAIAdvisor },
+    consentsList: { initialize, updateAIAdvisor, aiAdvisor, statusAIAdvisor },
   } = useAIAdvisorViewModel();
   const {
-    biListViewModel: { activeDomain },
+    biListViewModel: { activeDomain, dataStream },
   } = useBiViewModel();
 
   useEffect(() => {
@@ -67,7 +68,6 @@ const AIAdvisor = observer(() => {
         ...(aiAdvisor?.openai_key ? { openai_key: aiAdvisor?.openai_key } : {}),
         ...(aiAdvisor?.openai_assistant ? { openai_assistant: aiAdvisor?.openai_assistant } : {}),
       });
-    console.log('initneeee', values);
   }, [aiAdvisor]);
 
   useEffect(() => {
@@ -149,10 +149,18 @@ const AIAdvisor = observer(() => {
     Additions: Explicit mention and inclusion of beacons and tracking pixels. Add a draft disclaimer in the generated policy. Ensure third-party data sharing is addressed, with optional placeholder to list vendors. Highlight user rights under GDPR/CCPA. Remove phone number since don't need it.
     `;
     const consent_request_prompt = `
-    You are a privacy user experience expert specializing in global privacy compliance (GDPR, ePrivacy, CCPA). Generate a clear, user-friendly consent request message for a website. The message must explain cookie usage, mention beacons/tracking pixels, and clearly state which data types are collected before and after consent.
-    Do not include buttons or UI - just the message. Ensure that the user understands: Types of tracking technologies used (cookies + beacons), The purpose and legal basis for their use, The user’s ability to control or withdraw consent, Links to Privacy Policy and Cookie Declaration (assume they exist as WP pages).
-    ${JSON.stringify(cookieData, null, 2)}
-    Additions: Introduce beacons in the message (same category as cookies but separately acknowledged). Include language like: “We also use technologies like beacons and tracking pixels to measure engagement and improve services.”, Add placeholder link text: “You can read more in our [Privacy Policy] and [Cookie Declaration].”
+    You are a privacy user experience expert specializing in GDPR, ePrivacy, and CCPA compliance.
+    Generate a user-friendly and legally compliant consent message for a website.
+    The message must:
+      1. Explicitly describe the types of data collected both before and after consent (based on the provided arrays).
+      2. Explain clearly *why* the data is collected (purpose and legal basis).
+      3. Identify *who* the data may be shared with (third parties or processors, if mentioned or implied).
+      4. Acknowledge cookies, beacons, and tracking pixels as distinct but related technologies.
+      5. State that the user can control or withdraw consent anytime.
+      6. Include links to [Privacy Policy] and [Cookie Declaration].
+    If any list (cookies or beacons) is empty, you must still provide a clear, explicit statement explaining that *no non-essential data is collected* until consent is given. Avoid vague or generic phrasing.
+    Input JSON: ${JSON.stringify(cookieData, null, 2)}
+    Use this information to craft an explicit and transparent consent message.
     `;
     switch (type) {
       case 'domain_categorization':
@@ -227,254 +235,309 @@ const AIAdvisor = observer(() => {
           <h2 className="fw-bold mb-8px">AI Privacy Advisor</h2>
         </div>
       </div>
-      {aiAdvisor?.is_cmp_license_valid && aiAdvisor?.license_key ? (
+      {statusAIAdvisor === PAGE_STATUS.LOADING ? (
         <>
-          <div className="bg-white w-100 rounded-3 p-4">
-            <strong>AI Privacy Advisor</strong> helps you manage cookie and beacon compliance by
-            analyzing what loads before and after consent. It enables AI Auto-Blocking and generates
-            privacy documentation based on real scan data. With one click, you can configure
-            third-party and domain/path blocking, and create cookie declarations, privacy policies,
-            and consent text to support GDPR and ePrivacy Directive compliance. While optimized for
-            strict opt-in regimes like the EU, it also supports transparency and documentation
-            requirements for opt-out frameworks such as CCPA.
-          </div>
-          {!aiAdvisor?.domain_categorization &&
-          !aiAdvisor?.cookie_declaration &&
-          !aiAdvisor?.privacy_policy &&
-          !aiAdvisor?.consent_request ? (
-            <div className="mt-4">
-              <Button
-                className="ai_generate_button d-flex align-items-center w-auto"
-                variant="success"
-                disabled={isAllGenerated}
-                onClick={async () => {
-                  setIsAllGenerated(true);
-                  await handleGenerate('domain_categorization');
-                  await handleGenerate('cookie_declaration');
-                  await handleGenerate('privacy_policy');
-                  await handleGenerate('consent_request');
-                  setIsAllGenerated(false);
-                }}
-              >
-                {isAllGenerated && <Spinner size="sm" className="me-2" />}
-                <div>Generate</div>
-              </Button>
-            </div>
-          ) : (
-            <></>
-          )}
-
-          <div id="domain_categorization" className="prompt_item bg-white rounded-3 p-32px mt-4">
-            <div className="prompt_item_title">Domain Categorization</div>
-            <div className="prompt_item_question">
-              <img
-                width="24px"
-                height="24px"
-                src={env.PUBLIC_URL + '/assets/images/question.png'}
-              />
-              This draft was automatically generated based on real scan data from your website and
-              identifies third-party domains, cookies, and beacons used, categorized by purpose.
-            </div>
-            <div className="prompt_item_warning">
-              <img width="24px" height="24px" src={env.PUBLIC_URL + '/assets/images/warning.png'} />
-              Please review and adjust the content to make sure it reflects your actual data
-              practices before publishing.
-            </div>
-            <div className="prompt_item_info" style={{ alignItems: 'start' }}>
-              <img width="24px" height="24px" src={env.PUBLIC_URL + '/assets/images/info.png'} />
-              <div>
-                <div>
-                  <strong>Disclaimer:</strong>The AI Privacy Advisor can only detect and
-                  automatically block third-party services (such as cookies, scripts, or domains)
-                  that are integrated via WordPress plugins or recognizable injection patterns. Any
-                  third-party technologies manually inserted into the WordPress theme files or
-                  directly embedded in the source code (e.g., within the{' '}
-                  <strong>&lt;head&gt;</strong> or <strong>&lt;footer&gt;</strong> sections) bypass
-                  plugin detection and must be manually move the loading of such scripts or links
-                  into the <strong>window.funcAfterConsent</strong> function within your code.
-                </div>
-                <code
-                  style={{
-                    display: 'inline-block',
-                    whiteSpace: 'pre',
-                    marginTop: '10px',
-                    borderRadius: '10px',
-                    padding: '0 20px',
-                    width: 'auto',
-                    background: '#f0f0f1',
-                  }}
-                >
-                  {`window.funcAfterConsent = async function ()
-{
-  // Load your 3rd party or JS you need after consent here
-}`}
-                </code>
-              </div>
-            </div>
-            <div className="prompt_item_result">
-              <div className="loading">
-                <div className="loader"></div>
-              </div>
-              <CopyToClipboard htmlContent={values?.domain_categorization} />
-            </div>
-            <div className="domain_categorization_result"></div>
-            <div className="domain_categorization_buttons">
-              <Button
-                variant="success"
-                disabled={isHaveScanResult || domainCategoryStatus}
-                className="prompt_item_regenerate d-flex align-items-center <?php if(!$optionsDomainCategorization) echo 'hide'; ?>"
-              >
-                {domainCategoryStatus && <Spinner size="sm" className="me-2" />}
-                <div>Regenerate</div>
-              </Button>
-            </div>
-            {isHaveScanResult ? (
-              <div className="error" style={{ color: 'red' }}>
-                Your site not having scanned result yet. Please contact Aesirx team to perform scan.
-              </div>
-            ) : (
-              <></>
-            )}
-          </div>
-          <div id="cookie_declaration" className="prompt_item bg-white rounded-3 p-32px">
-            <div className="prompt_item_title">Cookie Declaration</div>
-            <div className="prompt_item_question">
-              <img
-                width="24px"
-                height="24px"
-                src={env.PUBLIC_URL + '/assets/images/question.png'}
-              />
-              This draft was automatically generated based on real scan data from your website and
-              lists the cookies and tracking technologies detected.
-            </div>
-            <div className="prompt_item_warning">
-              <img width="24px" height="24px" src={env.PUBLIC_URL + '/assets/images/warning.png'} />
-              Please review and adjust the content to make sure it reflects your actual data
-              practices before publishing.
-            </div>
-            <div className="prompt_item_info">
-              <img width="24px" height="24px" src={env.PUBLIC_URL + '/assets/images/info.png'} />
-              For full setup instructions:{' '}
-              <a
-                href="https://aesirx.io/documentation/cmp/how-to/aesirx-cmp-how-to-generate-a-cookie-declaration-with-ai"
-                target="_blank"
-                className="text-decoration-underline"
-              >
-                AesirX CMP Guide: How to Generate a Cookie Declaration with AI
-              </a>
-              .
-            </div>
-            <div className="prompt_item_result">
-              <div className="loading">
-                <div className="loader"></div>
-              </div>
-              <CopyToClipboard htmlContent={values?.cookie_declaration} />
-            </div>
-            <Button
-              variant="success"
-              className="prompt_item_regenerate d-flex align-items-center"
-              disabled={cookieDeclarationStatus}
-              onClick={() => {
-                handleGenerate('cookie_declaration');
-              }}
-            >
-              {cookieDeclarationStatus && <Spinner size="sm" className="me-2" />}
-              <div>Regenerate</div>
-            </Button>
-          </div>
-          <div id="privacy_policy" className="prompt_item bg-white rounded-16px p-32px">
-            <div className="prompt_item_title">Privacy Policy</div>
-            <div className="prompt_item_question">
-              <img
-                width="24px"
-                height="24px"
-                src={env.PUBLIC_URL + '/assets/images/question.png'}
-              />
-              This draft was automatically generated based on real scan data from your website and
-              outlines the data collection and processing activities detected.
-            </div>
-            <div className="prompt_item_warning">
-              <img width="24px" height="24px" src={env.PUBLIC_URL + '/assets/images/warning.png'} />
-              Please review and adjust the content to make sure it reflects your actual data
-              practices before publishing.
-            </div>
-            <div className="prompt_item_info">
-              <img width="24px" height="24px" src={env.PUBLIC_URL + '/assets/images/info.png'} />
-              For full setup instructions:{' '}
-              <a
-                href="https://aesirx.io/documentation/cmp/how-to/aesirx-cmp-guide-how-to-generate-a-privacy-policy-with-ai"
-                target="_blank"
-              >
-                AesirX CMP Guide: How to Generate a Privacy Policy with AI
-              </a>
-              .
-            </div>
-            <div className="prompt_item_result">
-              <div className="loading">
-                <div className="loader"></div>
-              </div>
-              <CopyToClipboard htmlContent={values?.privacy_policy} />
-            </div>
-            <Button
-              variant="success"
-              className="prompt_item_regenerate d-flex align-items-center"
-              disabled={privacyPolicyStatus}
-              onClick={() => {
-                handleGenerate('privacy_policy');
-              }}
-            >
-              {privacyPolicyStatus && <Spinner size="sm" className="me-2" />}
-              <div>Regenerate</div>
-            </Button>
-          </div>
-          <div id="consent_request" className="prompt_item bg-white rounded-16px p-32px">
-            <div className="prompt_item_title">Consent Request</div>
-            <div className="prompt_item_question">
-              <img
-                width="24px"
-                height="24px"
-                src={env.PUBLIC_URL + '/assets/images/question.png'}
-              />
-              This draft was automatically generated based on real scan data from your website and
-              provides a consent message tailored to the technologies and data flows detected.
-            </div>
-            <div className="prompt_item_warning">
-              <img width="24px" height="24px" src={env.PUBLIC_URL + '/assets/images/warning.png'} />
-              Please review and adjust the content to make sure it reflects your actual data
-              practices before publishing.
-            </div>
-            <div className="prompt_item_info d-none">
-              <img width="24px" height="24px" src={env.PUBLIC_URL + '/assets/images/info.png'} />
-              For full setup instructions: AesirX CMP Guide: How to Generate Consent Request Text
-              with AI
-            </div>
-            <div className="prompt_item_result">
-              <div className="loading">
-                <div className="loader"></div>
-              </div>
-              <CopyToClipboard htmlContent={values?.consent_request} />
-            </div>
-            <Button
-              variant="success"
-              className="prompt_item_regenerate d-flex align-items-center"
-              disabled={consentRequestStatus}
-              onClick={() => {
-                handleGenerate('consent_request');
-              }}
-            >
-              {consentRequestStatus && <Spinner size="sm" className="me-2" />}
-              <div>Regenerate</div>
-            </Button>
-          </div>
+          <RingLoaderComponent className="d-flex justify-content-center align-items-center bg-white" />
         </>
       ) : (
-        <div className="bg-white w-100 rounded-3 p-4">
-          Your license is expried or not found. Please update new license{' '}
-          <a href="https://aesirx.io/licenses" target="_blank">
-            https://aesirx.io/licenses
-          </a>
-          .
-        </div>
+        <>
+          {aiAdvisor?.is_cmp_license_valid && aiAdvisor?.license_key ? (
+            <>
+              <div className="bg-white w-100 rounded-3 p-4">
+                <strong>AI Privacy Advisor</strong> helps you manage cookie and beacon compliance by
+                analyzing what loads before and after consent. It provides detailed insights and
+                generates privacy documentation based on real scan data. You can easily create
+                cookie declarations, privacy policies, and consent text to support GDPR and ePrivacy
+                Directive compliance. While optimized for strict opt-in regimes like the EU, it also
+                supports transparency and documentation requirements for opt-out frameworks such as
+                CCPA.
+              </div>
+              {!aiAdvisor?.domain_categorization &&
+              !aiAdvisor?.cookie_declaration &&
+              !aiAdvisor?.privacy_policy &&
+              !aiAdvisor?.consent_request ? (
+                <div className="mt-4">
+                  <Button
+                    className="ai_generate_button d-flex align-items-center w-auto"
+                    variant="success"
+                    disabled={isAllGenerated}
+                    onClick={async () => {
+                      setIsAllGenerated(true);
+                      await handleGenerate('domain_categorization');
+                      await handleGenerate('cookie_declaration');
+                      await handleGenerate('privacy_policy');
+                      await handleGenerate('consent_request');
+                      setIsAllGenerated(false);
+                    }}
+                  >
+                    {isAllGenerated && <Spinner size="sm" className="me-2" />}
+                    <div>Generate</div>
+                  </Button>
+                </div>
+              ) : (
+                <></>
+              )}
+
+              <div
+                id="domain_categorization"
+                className="prompt_item bg-white rounded-3 p-32px mt-4"
+              >
+                <div className="prompt_item_title">Domain Categorization</div>
+                <div className="prompt_item_question">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/question.png'}
+                  />
+                  This draft was automatically generated based on real scan data from your website
+                  and identifies third-party domains, cookies, and beacons used, categorized by
+                  purpose.
+                </div>
+                <div className="prompt_item_warning">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/warning.png'}
+                  />
+                  Please review and adjust the content to make sure it reflects your actual data
+                  practices before publishing.
+                </div>
+                <div className="prompt_item_info" style={{ alignItems: 'start' }}>
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/info.png'}
+                  />
+                  <div>
+                    <div>
+                      <strong>Disclaimer:</strong>The AI Privacy Advisor can only detect third-party
+                      services (such as cookies, scripts, or domains) that are integrated through
+                      recognized patterns or common injection methods. Any third-party technologies
+                      manually inserted into a site’s source code (e.g., within the{' '}
+                      <strong>&lt;head&gt;</strong> or <strong>&lt;footer&gt;</strong> sections)
+                      bypass plugin detection and must be manually move the loading of such scripts
+                      or links into the <strong>window.aesirxHoldBackJS</strong> function within
+                      your code.
+                    </div>
+                    <code
+                      style={{
+                        display: 'inline-block',
+                        whiteSpace: 'pre',
+                        marginTop: '10px',
+                        borderRadius: '10px',
+                        padding: '0 20px',
+                        width: 'auto',
+                        background: '#f0f0f1',
+                      }}
+                    >
+                      {`window.aesirxHoldBackJS = async function ()
+[
+    {
+        category: "analytics", // essential | functional | analytics | advertising | custom
+        name: "Analytics Script",
+        script: () => {
+          // Load your 3rd party or JS you need after consent here
+        }
+    }
+]}`}
+                    </code>
+                  </div>
+                </div>
+                <div className="prompt_item_result">
+                  <div className="loading">
+                    <div className="loader"></div>
+                  </div>
+                  <CopyToClipboard htmlContent={values?.domain_categorization} />
+                </div>
+                <div className="domain_categorization_result"></div>
+                <div className="domain_categorization_buttons">
+                  <Button
+                    variant="success"
+                    disabled={isHaveScanResult || domainCategoryStatus}
+                    className="prompt_item_regenerate d-flex align-items-center"
+                    onClick={() => {
+                      handleGenerate('domain_categorization');
+                    }}
+                  >
+                    {domainCategoryStatus && <Spinner size="sm" className="me-2" />}
+                    <div>Regenerate</div>
+                  </Button>
+                </div>
+                {isHaveScanResult ? (
+                  <div className="error" style={{ color: 'red' }}>
+                    Your site not having scanned result yet. Please contact Aesirx team to perform
+                    scan.
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <div id="cookie_declaration" className="prompt_item bg-white rounded-3 p-32px">
+                <div className="prompt_item_title">Cookie Declaration</div>
+                <div className="prompt_item_question">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/question.png'}
+                  />
+                  This draft was automatically generated based on real scan data from your website
+                  and lists the cookies and tracking technologies detected.
+                </div>
+                <div className="prompt_item_warning">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/warning.png'}
+                  />
+                  Please review and adjust the content to make sure it reflects your actual data
+                  practices before publishing.
+                </div>
+                <div className="prompt_item_info">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/info.png'}
+                  />
+                  For full setup instructions:{' '}
+                  <a
+                    href="https://aesirx.io/documentation/cmp/how-to/aesirx-cmp-how-to-generate-a-cookie-declaration-with-ai"
+                    target="_blank"
+                    className="text-decoration-underline"
+                  >
+                    AesirX CMP Guide: How to Generate a Cookie Declaration with AI
+                  </a>
+                  .
+                </div>
+                <div className="prompt_item_result">
+                  <div className="loading">
+                    <div className="loader"></div>
+                  </div>
+                  <CopyToClipboard htmlContent={values?.cookie_declaration} />
+                </div>
+                <Button
+                  variant="success"
+                  className="prompt_item_regenerate d-flex align-items-center"
+                  disabled={cookieDeclarationStatus}
+                  onClick={() => {
+                    handleGenerate('cookie_declaration');
+                  }}
+                >
+                  {cookieDeclarationStatus && <Spinner size="sm" className="me-2" />}
+                  <div>Regenerate</div>
+                </Button>
+              </div>
+              <div id="privacy_policy" className="prompt_item bg-white rounded-16px p-32px">
+                <div className="prompt_item_title">Privacy Policy</div>
+                <div className="prompt_item_question">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/question.png'}
+                  />
+                  This draft was automatically generated based on real scan data from your website
+                  and outlines the data collection and processing activities detected.
+                </div>
+                <div className="prompt_item_warning">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/warning.png'}
+                  />
+                  Please review and adjust the content to make sure it reflects your actual data
+                  practices before publishing.
+                </div>
+                <div className="prompt_item_info">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/info.png'}
+                  />
+                  For full setup instructions:{' '}
+                  <a
+                    href="https://aesirx.io/documentation/cmp/how-to/aesirx-cmp-guide-how-to-generate-a-privacy-policy-with-ai"
+                    target="_blank"
+                  >
+                    AesirX CMP Guide: How to Generate a Privacy Policy with AI
+                  </a>
+                  .
+                </div>
+                <div className="prompt_item_result">
+                  <div className="loading">
+                    <div className="loader"></div>
+                  </div>
+                  <CopyToClipboard htmlContent={values?.privacy_policy} />
+                </div>
+                <Button
+                  variant="success"
+                  className="prompt_item_regenerate d-flex align-items-center"
+                  disabled={privacyPolicyStatus}
+                  onClick={() => {
+                    handleGenerate('privacy_policy');
+                  }}
+                >
+                  {privacyPolicyStatus && <Spinner size="sm" className="me-2" />}
+                  <div>Regenerate</div>
+                </Button>
+              </div>
+              <div id="consent_request" className="prompt_item bg-white rounded-16px p-32px">
+                <div className="prompt_item_title">Consent Request</div>
+                <div className="prompt_item_question">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/question.png'}
+                  />
+                  This draft was automatically generated based on real scan data from your website
+                  and provides a consent message tailored to the technologies and data flows
+                  detected.
+                </div>
+                <div className="prompt_item_warning">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/warning.png'}
+                  />
+                  Please review and adjust the content to make sure it reflects your actual data
+                  practices before publishing.
+                </div>
+                <div className="prompt_item_info d-none">
+                  <img
+                    width="24px"
+                    height="24px"
+                    src={env.PUBLIC_URL + '/assets/images/info.png'}
+                  />
+                  For full setup instructions: AesirX CMP Guide: How to Generate Consent Request
+                  Text with AI
+                </div>
+                <div className="prompt_item_result">
+                  <div className="loading">
+                    <div className="loader"></div>
+                  </div>
+                  <CopyToClipboard htmlContent={values?.consent_request} />
+                </div>
+                <Button
+                  variant="success"
+                  className="prompt_item_regenerate d-flex align-items-center"
+                  disabled={consentRequestStatus}
+                  onClick={() => {
+                    handleGenerate('consent_request');
+                  }}
+                >
+                  {consentRequestStatus && <Spinner size="sm" className="me-2" />}
+                  <div>Regenerate</div>
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="bg-white w-100 rounded-3 p-4">
+              Your license is expried or not found. Please update new license{' '}
+              <a href="https://aesirx.io/licenses" target="_blank">
+                https://aesirx.io/licenses
+              </a>
+              .
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -21,27 +21,11 @@ const DataStream = observer(({ integration }) => {
       biStore.biListViewModel?.activeDomain[0] === state
     )
       return;
-    if (state === 'all') {
-      if (
-        biStore.biListViewModel?.activeDomain?.length ===
-        biStore.biListViewModel?.listDomain?.length
-      ) {
-        biStore.biListViewModel.setActiveDomain([biStore.biListViewModel?.activeDomain[0]]);
-      } else {
-        biStore.biListViewModel.setActiveDomain(
-          biStore.biListViewModel?.listDomain?.map((item) => item?.domain)
-        );
-      }
-    } else {
-      biStore.biListViewModel?.activeDomain?.includes(state)
-        ? biStore.biListViewModel.setActiveDomain(
-            biStore.biListViewModel?.activeDomain.filter((i) => i !== state)
-          )
-        : biStore.biListViewModel.setActiveDomain([
-            ...biStore.biListViewModel?.activeDomain,
-            state,
-          ]);
-    }
+    biStore.biListViewModel?.activeDomain?.includes(state)
+      ? biStore.biListViewModel.setActiveDomain(
+          biStore.biListViewModel?.activeDomain.filter((i) => i !== state)
+        )
+      : biStore.biListViewModel.setActiveDomain([state]);
   };
   return (
     <>
@@ -60,7 +44,7 @@ const DataStream = observer(({ integration }) => {
               <Dropdown.Toggle
                 variant=""
                 className="bg-white d-flex align-items-center justify-content-start rounded-2 link_menu text-decoration-none text-break p-0 px-1 w-100 h-100 shadow-none"
-                style={{ minWidth: '200px' }}
+                style={{ minWidth: '250px' }}
               >
                 <p className="overflow-hidden text-start m-0">
                   <span className="mb-sm fs-12 text-gray-heading">{t('txt_menu_data_stream')}</span>
@@ -113,7 +97,7 @@ const DataStream = observer(({ integration }) => {
                             className={`text-decoration-none border-bottom d-flex align-items-center justify-content-between`}
                           >
                             <div
-                              className={`d-block py-2 link_menu text-decoration-none fs-5 fw-semibold `}
+                              className={`d-block py-2 link_menu text-decoration-none fs-5 fw-semibold pe-3`}
                             >
                               {item.name}
                               <div className="fs-12 text-gray-heading fw-normal">{item.domain}</div>
@@ -135,38 +119,6 @@ const DataStream = observer(({ integration }) => {
                     );
                   })}
                 </div>
-                {biStore.biListViewModel?.listDomain?.length > 1 ? (
-                  <div
-                    className={`datastream_all_menu item_menu cursor-pointer mb-0 p-0 border-bottom bg-white w-100 py-1 ps-16 pe-20`}
-                    name={`datastream-all`}
-                  >
-                    <Form.Label
-                      className={`text-decoration-none mb-0 d-flex align-items-center justify-content-between`}
-                    >
-                      <div
-                        className={`d-block py-2 link_menu text-decoration-none fs-5 fw-semibold `}
-                      >
-                        Select All
-                      </div>
-                      <Form.Check
-                        onChange={() => {
-                          handleChange('all');
-                        }}
-                        checked={
-                          biStore.biListViewModel?.activeDomain?.length ===
-                          biStore.biListViewModel?.listDomain?.length
-                        }
-                        value={`all`}
-                        name={`datastream-all`}
-                        type="checkbox"
-                        id={`datastream-checkbox--all`}
-                        className="data_stream_checkbox"
-                      />
-                    </Form.Label>
-                  </div>
-                ) : (
-                  <></>
-                )}
               </Dropdown.Menu>
             </Dropdown>
           </div>
