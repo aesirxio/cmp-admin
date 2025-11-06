@@ -84,7 +84,7 @@ const IDVerification = observer(() => {
   } else if (!values?.age_check && values?.country_check) {
     showPreview = 'country';
   }
-
+  console.log('values', values);
   return (
     <div className="py-4 px-4 h-100 d-flex flex-column min-vh-100">
       <div className="d-flex align-items-center justify-content-between mb-24 flex-wrap">
@@ -290,7 +290,7 @@ const IDVerification = observer(() => {
                   <div>
                     To access this content, you must be from{' '}
                     <span className="allow_country_text">
-                      {values?.allowed_countries?.map((country) => country?.label).join(', ')}
+                      {values?.allowed_countries?.map((country) => country).join(', ')}
                     </span>
                     .
                   </div>
@@ -309,7 +309,7 @@ const IDVerification = observer(() => {
                   <div>
                     Access is excluded to users from{' '}
                     <span className="disallow_country_text">
-                      {values?.disallowed_countries?.map((country) => country?.label).join(', ')}
+                      {values?.disallowed_countries?.map((country) => country).join(', ')}
                     </span>
                     .
                   </div>

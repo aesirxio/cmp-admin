@@ -182,14 +182,6 @@ const ConsentsTemplate = observer(() => {
         env.PUBLIC_URL + '/assets/images/check_circle.svg'
       }" width={'14px'} height={'15px'} /></span>
       <div class="ms-10px">
-        <span class='fw-semibold text-primary'>Earn rewards:</span> Participate in decentralized consent for privacy & rewards.
-      </div>
-    </div>
-    <div class="d-flex align-items-start check-line">
-      <span><img src="${
-        env.PUBLIC_URL + '/assets/images/check_circle.svg'
-      }" width={'14px'} height={'15px'} /></span>
-      <div class="ms-10px">
         <span class='fw-semibold text-primary'>Transparent data collection practices:</span> Understand how your data is collected & used.
       </div>
     </div>
@@ -339,8 +331,7 @@ const ConsentsTemplate = observer(() => {
               <p className="mt-3 fs-sm">
                 Decentralized Consent Mode setup improves Google Consent Mode 2.0 by not loading any
                 scripts, beacons, or tags until after consent is given, reducing compliance risks.
-                It also includes Decentralized Consent, for more control over personal data and
-                rewards.
+                It also includes Decentralized Consent, for more control over personal data.
               </p>
             </label>
           </Col>
@@ -360,6 +351,9 @@ const ConsentsTemplate = observer(() => {
                 },
               }}
             />
+            <p className="mt-2 fst-italic">
+              Always link your own website's Privacy Policy, not the AesirX example
+            </p>
             <Button
               className="btn btn-success-light my-2 d-flex align-items-center"
               onClick={() => {
